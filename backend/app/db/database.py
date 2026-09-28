@@ -5,21 +5,25 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import DeclarativeBase
 from app.core.config import settings
 
+import urllib.parse
+
 # Normalize database URL for async driver compatibility
-db_url = settings.database_url
-if db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
-elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+asyncpg://"):
-    db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-
-# Handle SSL mode query parameters for asyncpg
-if "sslmode=require" in db_url:
-    db_url = db_url.replace("sslmode=require", "ssl=require")
-
-# Create engine with proper settings for SQLite vs PostgreSQL
+raw_url = settings.database_url
 connect_args = {}
-if settings.is_sqlite:
+
+if raw_url.startswith(("postgres://", "postgresql://")):
+    if not raw_url.startswith("postgresql+asyncpg://"):
+        raw_url = "postgresql+asyncpg://" + raw_url.split("://", 1)[1]
+    
+    parsed = urllib.parse.urlparse(raw_url)
+    # Clean query string parameters (like sslmode, channel_binding) which asyncpg doesn't parse via URL query
+    db_url = urllib.parse.urlunparse((parsed.scheme, parsed.netloc, parsed.path, "", "", ""))
+    connect_args = {"ssl": True}
+elif settings.is_sqlite:
+    db_url = raw_url
     connect_args = {"check_same_thread": False}
+else:
+    db_url = raw_url
 
 engine = create_async_engine(
     db_url,
