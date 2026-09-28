@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light Theme Design Tokens */
+    --bg-primary: #fdf9f5;
+    --bg-secondary: #f9f5f0;
+    --bg-card: #ffffff;
+    --bg-card-alt: #faf7f4;
+    --border-color: #ece5dc;
+    --border-soft: #f0ebe4;
+    --text-primary: #3d3052;
+    --text-secondary: #6b5d7b;
+    --text-muted: #9b8eab;
+    --accent-primary: #8b6cf7;
+    --accent-secondary: #33af82;
+    --accent-warm: #f5713d;
+    --accent-rose: #ed4b74;
+  }
+
+  .dark {
+    --bg-primary: #0e0c18;
+    --bg-secondary: #14112a;
+    --bg-card: #1a1630;
+    --bg-card-alt: #1e1a38;
+    --border-color: #2a2445;
+    --border-soft: #231e3d;
+    --text-primary: #f0eaf8;
+    --text-secondary: #bfb0d6;
+    --text-muted: #8877a6;
+    --accent-primary: #a78bfa;
+    --accent-secondary: #58c99e;
+    --accent-warm: #ff9468;
+    --accent-rose: #f97698;
+  }
+
+  body {
+    @apply antialiased font-sans transition-colors duration-300;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+
+  .dark body {
+    background: var(--bg-primary);
+  }
+
+  /* Selection highlight */
+  ::selection {
+    background: rgba(139, 108, 247, 0.18);
+    color: #3d3052;
+  }
+
+  .dark ::selection {
+    background: rgba(167, 139, 250, 0.25);
+    color: #f0eaf8;
+  }
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd0e6;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #332b50;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c4b0e4;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #4a3f70;
+}
+
+/* Document Highlighting & Evidence Glow */
+.evidence-highlight {
+  @apply bg-pastel-lemon-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-200 px-1 py-0.5 rounded font-medium transition-all;
+}
+
+.evidence-highlight-active {
+  @apply bg-clinical-100 text-clinical-900 dark:bg-clinical-950/80 dark:text-clinical-200 ring-2 ring-clinical-400/40 font-semibold px-1 py-0.5 rounded shadow-sm;
+}
+
+/* Ambient Gradient Shimmer */
+@keyframes ambient-shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.pastel-shimmer {
+  background: linear-gradient(135deg, #f5f0ff, #f0faf5, #fff5f0, #fff2f5, #f5f0ff);
+  background-size: 400% 400%;
+  animation: ambient-shimmer 8s ease-in-out infinite;
+}
