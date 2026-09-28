@@ -5,13 +5,24 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import DeclarativeBase
 from app.core.config import settings
 
+# Normalize database URL for async driver compatibility
+db_url = settings.database_url
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+asyncpg://"):
+    db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+# Handle SSL mode query parameters for asyncpg
+if "sslmode=require" in db_url:
+    db_url = db_url.replace("sslmode=require", "ssl=require")
+
 # Create engine with proper settings for SQLite vs PostgreSQL
 connect_args = {}
 if settings.is_sqlite:
     connect_args = {"check_same_thread": False}
 
 engine = create_async_engine(
-    settings.database_url,
+    db_url,
     echo=settings.debug,
     connect_args=connect_args,
     pool_pre_ping=True,
