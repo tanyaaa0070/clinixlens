@@ -1,103 +1,197 @@
-# ClinixLens — Clinical Intelligence Workspace
+# ClinixLens — AI Clinical Document Reviewer & Intelligence Workspace
 
-> **"From Clinical Documents to Clear, Evidence-Linked Insight."**
->
-> A production-grade clinical document intelligence workspace designed to ingest plain text notes, high-resolution PDFs, scanned encounter charts, and handwritten records — transforming unstructured healthcare documents into validated, evidence-grounded clinical intelligence.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
+[![React: 19](https://img.shields.io/badge/Frontend-React%2019-61DAFB.svg)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6.svg)](https://www.typescriptlang.org/)
+[![Database: PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%20(Neon)-336791.svg)](https://neon.tech/)
+[![AI Engine: Gemini 1.5 Flash](https://img.shields.io/badge/AI%20Engine-Gemini%201.5%20Flash-8E75B2.svg)](https://deepmind.google/technologies/gemini/)
+
+> **Technical Assignment Submission — AI/ML Engineering Internship**  
+> **Candidate**: Tanya Singh  
+> **Repository**: [https://github.com/tanyaaa0070/clinixlens](https://github.com/tanyaaa0070/clinixlens)  
+> **Live Web Application**: [https://clinixlens.vercel.app](https://clinixlens.vercel.app)  
+> **Live Backend API**: [https://clinixlens-1.onrender.com](https://clinixlens-1.onrender.com)  
+> **API Swagger Documentation**: [https://clinixlens-1.onrender.com/docs](https://clinixlens-1.onrender.com/docs)  
+> **Health Check Endpoint**: [https://clinixlens-1.onrender.com/health](https://clinixlens-1.onrender.com/health)
 
 ---
 
-## 1. Project Overview & Problem Statement
+## 1. Executive Summary & Problem Statement
 
-### The Problem
-Healthcare reviewers, clinical chart auditors, and medical informatics teams spend countless hours manually parsing heterogeneous, unstructured documentation: clinical narratives, discharge summaries, emergency triage logs, and scanned multi-page PDFs. Traditional AI summarizers are dangerous in medical contexts because they:
-- Hallucinate absent findings or invent normal vital signs.
-- Fail to detect subtle clinical contradictions (e.g. penicillin allergy documented in the header while amoxicillin is prescribed at discharge).
-- Omit verbatim source references, forcing clinicians to re-read the entire record.
-- Lack strict type contracts and human-in-the-loop oversight.
+### The Healthcare Challenge
+Healthcare reviewers, medical chart auditors, and clinicians spend hundreds of hours manually parsing heterogeneous, unstructured medical documentation — including typed progress notes, scanned multi-page discharge summaries, emergency triage logs, and cursive handwritten encounter slips.
+
+Standard conversational LLMs and naive summarization wrappers introduce severe clinical safety risks:
+* **Hallucination & Fabrication**: Inventing normal vital signs or missing lab values.
+* **Failure to Detect Critical Conflicts**: Overlooking dangerous drug-allergy contradictions (e.g., documented severe penicillin allergy paired with an amoxicillin discharge order).
+* **Black-Box Opacity**: Omitting verbatim source grounding, forcing clinicians to re-read the entire document.
+* **Lack of Schema Enforcement**: Unpredictable output formats that break downstream systems.
 
 ### The ClinixLens Solution
-ClinixLens is **not** an autonomous medical diagnostic tool or a naive ChatGPT wrapper. It is a **defensive clinical intelligence workspace** featuring:
-1. **Multi-Modal Document Intake**: Direct plain text, digital vector PDFs, rasterized scanned PDFs, and medical photography.
-2. **Dual-Path Text & OCR Pipeline**: Fast vector glyph extraction via PyMuPDF with automated fallback to Google Cloud Vision OCR ($300\text{ DPI}$).
-3. **Structured AI Review Layer**: Google Gemini 1.5 Flash operating under strict zero-temperature JSON constraints.
-4. **Pydantic Contract Validation**: 100% schema enforcement — unvalidated LLM output is never exposed to the frontend.
-5. **Clinical Consistency Radar**: Rule-based detection of allergy contraindications, contradictory vitals, and conflicting patient ages.
-6. **Information Completeness Map**: Objective matrix assessing the presence of cardinal clinical categories.
-7. **Split-Screen Evidence Grounding**: Interactive bi-directional highlighting connecting extracted entities directly to verbatim quotes in the source text.
-8. **Human-in-the-Loop Audit Trails**: Clinician verification (`Verify`, `Needs Review`, `Dismiss`) persisted to relational database storage with timestamps.
+**ClinixLens** is a defensive, end-to-end clinical document intelligence workspace. It ingests multi-format documents (plain text, high-res PDF, scanned images), extracts granular clinical entities with verbatim evidence quotes, executes deterministic cross-consistency verification, and delivers an interactive clinician review interface with audit trails.
 
 ---
 
-## 2. Key Features
+## 2. Key Features & Capabilities
 
-- **Real-Time Processing Timeline**: 10-stage live execution stream powered by Server-Sent Events (SSE) with automated polling fallback.
-- **Consistency Radar**: Flags document discrepancies with side-by-side Evidence A vs Evidence B comparisons.
-- **Completeness Matrix**: Audits Demographics, Vitals, Symptoms, Diagnoses, Medications, Allergies, and Care Plan.
-- **Split-Screen Evidence Viewer**: Click any extracted medication, diagnosis, or symptom to immediately highlight its verbatim location in the original document.
-- **Synthetic Case Studio**: Evaluators can instantly test 6 diverse clinical scenarios (Routine, Polypharmacy, Acute Emergency, Incomplete, Conflicting, and Scanned Handwriting) in under 2 minutes without uploading files.
-- **Dark & Light Mode**: Accessible clinical color tokens with high contrast typography.
+* **Multi-Modal Document Intake**: Accepts raw clinical text, digital PDFs, scanned multi-page documents, and medical photography (PNG/JPG).
+* **Dual-Path Document Parsing & OCR**: High-speed digital vector extraction via PyMuPDF with automated fallback to Google Cloud Vision OCR ($300\text{ DPI}$).
+* **Structured Clinical Review Report**: Generates an executive **Report Summary** followed by structured, validated sections matching the required schema:
+  - Patient Demographics & Encounter Metadata
+  - Symptoms & Clinical Observations
+  - Diagnoses & Clinical Conditions (with ICD-10 suggestions)
+  - Medications & Prescriptions (with dosage, route, frequency)
+  - Vital Signs with Normal/Abnormal Range Evaluation
+  - Allergies & Documented Reactions
+  - Primary Clinical Concerns & Acuity Rating
+  - Missing Information Map (identifies unrecorded vitals, omitted dosages, absent demographics)
+  - Potential Inconsistencies & Clinical Consistency Radar (cross-checks allergies vs meds, discordant vitals, conflicting patient ages)
+  - Items Requiring Review & Clinician Sign-Off Workflow
+* **Interactive Split-Screen Evidence Viewer**: Click any extracted medication, diagnosis, or symptom to immediately highlight and scroll to its exact verbatim quote in the original source document.
+* **Human-in-the-Loop Verification**: Reviewers can interactively mark findings as `Verified`, `Needs Review`, or `Dismissed` with complete audit trails saved to the database.
+* **Real-Time 10-Stage Processing Timeline**: Live Server-Sent Events (SSE) stream with automated polling fallback.
+* **Synthetic Demonstration Studio**: 6 pre-built clinical challenge cases available for instant evaluation with zero file upload needed.
+* **Zero Real Patient Data**: 100% HIPAA Safe Harbor synthetic data guarantee.
 
 ---
 
 ## 3. Technology Stack
 
 ### Frontend Client
-| Technology | Role |
-|---|---|
-| **React 19 + TypeScript** | Strongly typed user interface |
-| **Vite 6** | Ultra-fast build tool and dev server |
-| **Tailwind CSS 3.4** | Tailored Medical SaaS design tokens & dark mode |
-| **TanStack React Query** | Asynchronous server-state caching & optimistic mutations |
-| **React Router 7** | Client-side routing with clean breadcrumbs |
-| **Lucide Icons** | Accessible clinical and technical iconography |
+* **Framework**: React 19 + TypeScript + Vite 6
+* **Styling & Theme**: Tailwind CSS 3.4 (Tailored Medical SaaS design tokens, Dark & Light mode)
+* **Icons & UI**: Lucide React Icons
+* **Data Fetching**: Native Fetch with SSE streaming (`EventSource`) and polling fallback
+* **Routing**: React Router 7 with client-side SPA rewrites
+* **Hosting**: Vercel CDN Edge Network
 
 ### Backend API
-| Technology | Role |
-|---|---|
-| **FastAPI (Python 3.11)** | High-throughput asynchronous REST API |
-| **Pydantic v2** | Strict schema validation and JSON serialization |
-| **SQLAlchemy 2.0 (Async)** | Asynchronous ORM supporting SQLite and PostgreSQL |
-| **PyMuPDF (`fitz`)** | Vector PDF text extraction & high-res page rasterization |
-| **Pillow (`PIL`)** | Medical image validation and buffer normalization |
-| **Google Cloud Vision API** | Enterprise OCR for scanned documents and cursive handwriting |
-| **Google Gemini 1.5 Flash** | Clinical entity reasoning and structured synthesis |
-| **Uvicorn** | ASGI production application server |
+* **Language & Framework**: Python 3.11 + FastAPI (Async ASGI)
+* **Schema Validation**: Pydantic v2 (Strict contract enforcement)
+* **Database & ORM**: PostgreSQL (Neon Serverless) / SQLite with SQLAlchemy 2.0 (Async) + `asyncpg` + `aiosqlite`
+* **Document Engine**: PyMuPDF (`fitz`) for PDF vector parsing & rasterization, Pillow (`PIL`) for image normalization
+* **OCR Service**: Google Cloud Vision API with confidence scoring
+* **AI / LLM Engine**: Google Gemini 1.5 Flash (zero-temperature structured extraction)
+* **Server & Hosting**: Uvicorn ASGI on Render Web Service
 
 ---
 
-## 4. System Architecture
+## 4. System Architecture & Interaction Flow
 
 ```
-User (Clinician / Auditor)
-       │
-       ▼
-React 19 Client (Vite + Tailwind CSS)
-       │
-       ├─── Multipart Upload / Text / Synthetic Trigger
-       ▼
-FastAPI API Gateway
-       │
-       ├─► Validation Layer (MIME signatures, file bounds)
-       │
-       ├─► Document Processing Pipeline (PyMuPDF)
-       │        │
-       │        ├─► Scanned? ──► Google Cloud Vision OCR
-       │        └─► Digital? ──► Native Vector Text
-       │
-       ├─► AI Clinical Review Engine (Gemini 1.5 Flash / Fallback)
-       │
-       ├─► Strict Pydantic Schema Validation (StructuredClinicalReport)
-       │
-       ├─► Clinical Consistency Radar & Missing Information Map
-       │
-       ├─► Persistence Layer (PostgreSQL / SQLite via Async SQLAlchemy)
-       │
-       └─► Real-Time Status Channel (Server-Sent Events & Polling)
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           CLINIXLENS FRONTEND                           │
+│                      (React 19 + Vite + TypeScript)                     │
+│  [New Analysis Intake]   [Split-Screen Evidence]   [History & Sign-off] │
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │ HTTP POST / GET / PATCH / SSE
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          FASTAPI API GATEWAY                            │
+│                 (Python 3.11 Async ASGI + Pydantic v2)                  │
+│       [Rate Limiting]   [Payload Sanitization]   [CORS Security]        │
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │
+          ┌──────────────────────────┼──────────────────────────┐
+          ▼                          ▼                          ▼
+┌──────────────────┐       ┌──────────────────┐       ┌──────────────────┐
+│ DOCUMENT PARSING │       │  AI / ML ENGINE  │       │ CROSS-CONSISTENCY│
+│  (PyMuPDF 300DPI │       │ (Gemini 1.5 Flash│       │  RADAR & MISSING │
+│ + Vision OCR)    │       │ Structured JSON) │       │  INFORMATION MAP │
+└─────────┬────────┘       └─────────┬────────┘       └─────────┬────────┘
+          │                          │                          │
+          └──────────────────────────┼──────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                      RELATIONAL PERSISTENCE LAYER                       │
+│             PostgreSQL (Neon Serverless) / SQLite (Async SQLAlchemy)    │
+│    [Analyses Table]     [Findings Index]     [Clinician Audit Trail]    │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+For detailed component interaction diagrams and SSE lifecycle flowcharts, see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+---
+
+## 5. Output Data Schema
+
+ClinixLens produces strongly-typed JSON reports validated via Pydantic:
+
+```json
+{
+  "report_summary": "Concise executive overview of primary concerns, diagnoses, and missing items.",
+  "patient_information": {
+    "name": "Eleanor Vance (Synthetic)",
+    "age": "58",
+    "gender": "Female",
+    "mrn": "SYNTH-842109",
+    "visit_date": "2026-08-14"
+  },
+  "symptoms": [
+    {
+      "name": "Bilateral toe numbness",
+      "severity": "mild",
+      "duration": "past year",
+      "source_quote": "Reports mild bilateral numbness in toes at bedtime"
+    }
+  ],
+  "diagnoses": [
+    {
+      "condition": "Type 2 Diabetes Mellitus",
+      "icd10_code": "E11.9",
+      "status": "active",
+      "confidence": 0.96,
+      "source_quote": "Type 2 Diabetes Mellitus without acute complications (E11.9)"
+    }
+  ],
+  "medications": [
+    {
+      "name": "Metformin",
+      "dosage": "1000 mg",
+      "route": "PO",
+      "frequency": "BID with meals",
+      "adherent": true,
+      "source_quote": "Metformin 1000 mg PO BID with meals"
+    }
+  ],
+  "vitals": {
+    "blood_pressure": "128/82 mmHg",
+    "heart_rate": "72 bpm",
+    "respiratory_rate": "16 breaths/min",
+    "temperature": "98.4 F",
+    "spo2": "98% on room air"
+  },
+  "allergies": [
+    {
+      "allergen": "NKDA (No Known Drug Allergies)",
+      "reaction": "none reported"
+    }
+  ],
+  "clinical_observations": [
+    "Monofilament test indicates slightly diminished fine touch at distal 1st metatarsals"
+  ],
+  "clinical_concerns": [
+    {
+      "concern": "Early diabetic peripheral neuropathy progression risk",
+      "acuity": "moderate"
+    }
+  ],
+  "missing_information": [
+    "Serum creatinine value not documented in current note"
+  ],
+  "potential_inconsistencies": [],
+  "requires_review": [
+    "Verify adherence to annual diabetic retinal examination"
+  ]
+}
 ```
 
 ---
 
-## 5. Repository & Folder Structure
+## 6. Repository Structure
 
 ```
 clinixlens/
@@ -105,182 +199,150 @@ clinixlens/
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── endpoints/
-│   │   │   │   ├── analyses.py      # Intake, report retrieval, SSE events, human review
-│   │   │   │   ├── health.py        # System health & engine diagnostics
-│   │   │   │   └── synthetic.py     # Synthetic demo case endpoints
-│   │   │   └── __init__.py
+│   │   │   │   ├── analyses.py          # Intake, report retrieval, SSE events, clinician review
+│   │   │   │   ├── health.py            # System health & telemetry diagnostics
+│   │   │   │   └── synthetic.py         # 6 synthetic demonstration cases
 │   │   ├── core/
-│   │   │   └── config.py            # Pydantic Settings & environment variables
+│   │   │   └── config.py                # Pydantic Settings & environment variables
 │   │   ├── db/
-│   │   │   └── database.py          # Async SQLAlchemy engine & session factory
+│   │   │   └── database.py              # Async SQLAlchemy engine & connection pooler
 │   │   ├── models/
-│   │   │   └── models.py            # Analysis, Finding, ProcessingEvent models
+│   │   │   └── models.py                # Analysis, Finding, ProcessingEvent models
 │   │   ├── schemas/
-│   │   │   └── schemas.py           # Pydantic request/response & clinical report schemas
+│   │   │   └── schemas.py               # Pydantic clinical report schemas & request models
 │   │   ├── services/
-│   │   │   ├── ai_service.py        # Gemini 1.5 Flash client with retry handling
-│   │   │   ├── consistency_service.py # Consistency Radar & completeness logic
-│   │   │   ├── deterministic_extractor.py # Fail-safe offline clinical parser
-│   │   │   ├── document_processor.py # PyMuPDF & Pillow document intake
-│   │   │   ├── ocr_service.py       # Google Cloud Vision OCR abstraction
-│   │   │   ├── pipeline_orchestrator.py # Master 10-stage execution pipeline & EventBus
-│   │   │   └── synthetic_data.py    # 6 prebuilt high-fidelity synthetic demo cases
-│   │   └── main.py                  # FastAPI entrypoint, lifespan seeding & CORS
+│   │   │   ├── ai_service.py            # Gemini 1.5 Flash structured review client
+│   │   │   ├── consistency_service.py   # Consistency Radar & completeness analyzer
+│   │   │   ├── deterministic_extractor.py # Fail-safe offline clinical rule parser
+│   │   │   ├── document_processor.py    # PyMuPDF & Pillow document intake
+│   │   │   ├── ocr_service.py           # Google Cloud Vision OCR abstraction
+│   │   │   ├── pipeline_orchestrator.py # 10-stage execution pipeline & SSE EventBus
+│   │   │   └── synthetic_data.py        # 6 pre-built high-fidelity clinical cases
+│   │   └── main.py                      # FastAPI app entrypoint, CORS & DB lifespan
 │   ├── tests/
-│   │   └── test_api.py              # Automated backend test suite
-│   ├── .env.example                 # Environment variable template
-│   ├── Dockerfile                   # Production container definition
-│   ├── render.yaml                  # Render cloud blueprint
-│   └── requirements.txt             # Python dependencies
+│   │   └── test_api.py                  # Pytest async test suite
+│   ├── .env.example                     # Backend environment variable template
+│   ├── Dockerfile                       # Production container definition
+│   ├── render.yaml                      # Render Infrastructure-as-Code blueprint
+│   └── requirements.txt                 # Python dependencies
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   │   └── layout/
-│   │   │       ├── AppLayout.tsx    # Responsive shell with theme provider
-│   │   │       ├── Navbar.tsx       # Top bar with dark mode toggle & breadcrumb
-│   │   │       └── Sidebar.tsx      # Sidebar navigation & live status indicators
+│   │   ├── components/layout/           # AppLayout, Navbar, Sidebar
 │   │   ├── pages/
-│   │   │   ├── EvidenceViewer.tsx   # Split-screen evidence & verbatim source grounding
-│   │   │   ├── History.tsx          # Filterable analysis history & audit trail
-│   │   │   ├── NewAnalysis.tsx      # Multi-modal ingestion (Text / PDF / Image)
-│   │   │   ├── Overview.tsx         # Dashboard with metrics & recent reports
-│   │   │   ├── ReportView.tsx       # AI Clinical Report, Radar & Review Mode
-│   │   │   ├── Settings.tsx         # Health diagnostics & configuration guide
-│   │   │   ├── SyntheticStudio.tsx  # Interactive demo case test studio
-│   │   │   └── Workspace.tsx        # Real-time 10-stage timeline & trace log
-│   │   ├── services/
-│   │   │   └── api.ts               # HTTP client with SSE and polling support
-│   │   ├── types/
-│   │   │   └── index.ts             # TypeScript domain interfaces
-│   │   ├── App.tsx                  # React Router configuration
-│   │   ├── index.css                # Custom medical SaaS tokens & typography
-│   │   └── main.tsx                 # React DOM mount point
-│   ├── index.html                   # HTML template with SEO meta tags
-│   ├── tailwind.config.js           # Tailwind clinical color extensions
-│   ├── tsconfig.json                # TypeScript compiler config
-│   ├── vercel.json                  # Vercel SPA routing rewrite rules
-│   └── vite.config.ts               # Vite proxy configuration
+│   │   │   ├── EvidenceViewer.tsx       # Split-screen evidence & verbatim source grounding
+│   │   │   ├── History.tsx              # Filterable history & audit trail
+│   │   │   ├── NewAnalysis.tsx          # Multi-modal ingestion (Text / PDF / Image)
+│   │   │   ├── Overview.tsx             # Clinical analytics dashboard
+│   │   │   ├── ReportView.tsx           # Structured report, consistency radar & review mode
+│   │   │   ├── Settings.tsx             # Real-time infrastructure diagnostics & telemetry
+│   │   │   ├── SyntheticStudio.tsx      # Pre-built clinical evaluation suite
+│   │   │   └── Workspace.tsx            # Live 10-stage execution stream
+│   │   ├── services/api.ts              # API client with SSE streaming & polling
+│   │   ├── types/index.ts               # TypeScript domain interfaces
+│   │   ├── App.tsx                      # Routing & navigation
+│   │   └── main.tsx                     # DOM entrypoint
+│   ├── .env.production                  # Production API configuration
+│   ├── tailwind.config.js               # Clinical theme tokens
+│   ├── vercel.json                      # Vercel SPA routing rewrites
+│   └── vite.config.ts                   # Vite bundler configuration
 └── docs/
-    ├── AI_ML_DESIGN.md              # Deep-dive AI/ML & NLP architecture document
-    └── ARCHITECTURE.md             # System topology and real-time interaction diagrams
+    ├── AI_ML_DESIGN.md                  # Comprehensive AI/ML & NLP pipeline documentation
+    ├── ARCHITECTURE.md                 # System topology & interaction diagrams
+    └── TECHNICAL_DECISIONS.md          # Technology choices, trade-offs & future roadmap
 ```
 
 ---
 
-## 6. Local Quickstart Guide
+## 7. Local Quickstart Guide
 
 ### Prerequisites
-- **Python**: 3.11+
-- **Node.js**: 18+ or 20+
-- **npm**: 9+
+* **Python**: 3.11+
+* **Node.js**: 18+ or 20+
+* **npm**: 9+
 
-### 6.1 Backend Setup
+### 7.1 Backend Setup
 ```bash
+# 1. Navigate to backend
 cd backend
 
-# Create virtual environment
+# 2. Create and activate virtual environment
 python -m venv venv
 
-# Activate virtual environment
 # Windows:
 .\venv\Scripts\activate
 # macOS/Linux:
 # source venv/bin/activate
 
-# Install dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# Configure environment variables
+# 4. Configure environment variables
 cp .env.example .env
-# Edit .env to add your GEMINI_API_KEY and GOOGLE_CLOUD_VISION_API_KEY
+# Edit .env and supply your GEMINI_API_KEY
 
-# Start backend server
+# 5. Launch FastAPI server
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-Backend API will be running at `http://localhost:8000`.
-Interactive Swagger documentation is available at `http://localhost:8000/docs`.
+* Backend API: `http://localhost:8000`
+* Interactive API Documentation (Swagger): `http://localhost:8000/docs`
+* Health Check: `http://localhost:8000/health`
 
-### 6.2 Frontend Setup
+### 7.2 Frontend Setup
 ```bash
+# 1. Navigate to frontend
 cd frontend
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Start Vite development server
+# 3. Start Vite dev server
 npm run dev
 ```
-Open `http://localhost:5173` in your browser.
+* Frontend Application: `http://localhost:5173`
 
 ---
 
-## 7. Environment Variables Reference
+## 8. Automated Testing & Verification
 
-Create a `.env` file in `backend/`:
+Run the automated backend test suite using `pytest`:
 
-| Variable | Description | Default / Example |
-|---|---|---|
-| `GEMINI_API_KEY` | Google Gemini API key for structured analysis | `AIzaSy...` |
-| `GEMINI_MODEL` | Gemini model variant | `gemini-1.5-flash` |
-| `GOOGLE_CLOUD_VISION_API_KEY` | Google Cloud Vision API key for OCR | `AIzaSy...` |
-| `DATABASE_URL` | Database connection URL | `sqlite+aiosqlite:///./clinixlens.db` |
-| `APP_ENV` | Environment mode (`development` or `production`) | `development` |
-| `CORS_ORIGINS` | Allowed CORS origins (comma-separated) | `http://localhost:5173,http://localhost:3000` |
-| `MAX_UPLOAD_SIZE_MB` | Maximum file upload limit in MB | `20` |
+```bash
+cd backend
+.\venv\Scripts\pytest tests/ -v
+```
 
----
-
-## 8. Deployment Guide
-
-### Deploying the Backend & Database to Render
-1. Create a **Web Service** on [Render](https://render.com).
-2. Connect your Git repository and select the `backend` root directory.
-3. Build Command: `pip install -r requirements.txt`
-4. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-5. Create a **Render PostgreSQL Database** and set `DATABASE_URL` in the Web Service environment variables.
-6. Set `GEMINI_API_KEY` and `GOOGLE_CLOUD_VISION_API_KEY`.
-7. Set `CORS_ORIGINS` to your frontend domain (e.g. `https://clinixlens.vercel.app`).
-
-Alternatively, deploy using the included `backend/render.yaml` Blueprint.
-
-### Deploying the Frontend to Vercel
-1. Import your repository into [Vercel](https://vercel.com).
-2. Set Root Directory to `frontend`.
-3. Framework Preset: `Vite`.
-4. Environment Variables:
-   - `VITE_API_URL`: Your hosted Render backend URL (e.g. `https://clinixlens-backend.onrender.com`).
-5. Deploy. Vercel automatically honors `frontend/vercel.json` for client-side routing.
+The test suite validates:
+* System health & telemetry endpoint response contracts (`GET /health`)
+* Plain text clinical note intake and extraction (`POST /api/v1/analyses/text`)
+* Synthetic case instant analysis (`POST /api/v1/analyses/synthetic/{id}`)
+* Granular finding verification updates (`PATCH /api/v1/analyses/{id}/findings/{id}`)
+* Consistency radar conflict detection on contradictory cases
+* Missing information map flagging on incomplete records
 
 ---
 
 ## 9. Synthetic Demonstration Cases
 
-To facilitate rapid technical evaluation without requiring proprietary clinical uploads, ClinixLens includes 6 built-in synthetic cases:
-1. **Routine Follow-up**: Controlled Type 2 Diabetes & Hypertension outpatient note with stable vitals and medication compliance.
-2. **Medication Review**: Polypharmacy in an elderly patient taking 9 concurrent prescriptions; evaluates orthostasis and hyperkalemia risk.
-3. **Emergency Visit**: Acute triage presentation with dyspnea, tachycardia, hypoxemia, positive D-dimer, and suspected pulmonary embolism.
-4. **Incomplete Clinical Note**: Walk-in clinic note missing patient age, gender, vital signs, and medication dosages; evaluates the Missing Information Map.
-5. **Conflicting Documentation**: Post-operative discharge note with conflicting patient ages, discordant blood pressure readings, and a severe penicillin allergy contradicted by an amoxicillin discharge order; tests the Clinical Consistency Radar.
-6. **Scanned Handwritten Note**: Simulates noisy OCR text with medical shorthand (`SOB`, `WNL`, `PRN`, `QID`) and variable confidence scores.
+For rapid evaluator testing without uploading clinical files:
+
+1. **Case 1: Routine Follow-up (Type 2 Diabetes & HTN)**: Outpatient encounter with well-controlled vitals, adherence check, and routine care plan.
+2. **Case 2: Complex Polypharmacy & Orthostasis**: Geriatric patient on 9 concurrent prescriptions; evaluates drug-drug interactions, orthostasis drop, and hyperkalemia risk.
+3. **Case 3: Emergency Encounter (Acute Dyspnea & Suspected PE)**: High-acuity triage note with hypoxemia, tachycardia, positive D-dimer, and stat anticoagulation.
+4. **Case 4: Incomplete Clinical Note**: Urgent care note lacking patient age, gender, date, vitals, and medication dosage; evaluates the Missing Information Map.
+5. **Case 5: Conflicting Post-Op Discharge Summary**: Tests the Consistency Radar against contradictory patient ages (64 vs 46), discordant vitals, and a severe penicillin allergy contradicted by an amoxicillin discharge order.
+6. **Case 6: Scanned Handwritten Progress Note**: Simulates OCR extraction of cursive shorthand (`SOB`, `WNL`, `PRN`, `BID`) with confidence variation.
 
 ---
 
-## 10. Synthetic Data Policy & Safety Boundaries
+## 10. Technical Documentation Index
 
-ClinixLens enforces a strict **Synthetic Data Policy**:
-- **0% Real Patient Identifiers**: All demonstration datasets are generated from synthetic clinical templates adhering to HIPAA Safe Harbor guidelines.
-- **Not a Diagnostic Tool**: ClinixLens is an assistive clinical intelligence and structured data extraction workspace. It does not replace the clinical judgment of certified medical practitioners.
-- **Never Inferred Data**: Absent clinical values are explicitly reported as `"Not available in submitted document"` to prevent dangerous extrapolation hallucinations.
+* **[AI/ML Design Documentation](docs/AI_ML_DESIGN.md)**: Details model selection, OCR fallback logic, prompt engineering, structured Pydantic JSON contracts, hallucination mitigation, and failure recovery.
+* **[Technical Decisions & Trade-Offs](docs/TECHNICAL_DECISIONS.md)**: Explains the rationale behind framework choices (FastAPI, React, PostgreSQL, Gemini), architectural decisions (SSE vs WebSockets), trade-offs, and future scalability roadmap.
+* **[System Architecture](docs/ARCHITECTURE.md)**: Complete system topology, component interactions, and live data flow diagrams.
 
 ---
 
-## 11. Known Limitations & Future Roadmap
+## 11. Ethical, Regulatory & Synthetic Data Guarantee
 
-### Current Limitations
-- Scanned document quality is bounded by OCR resolution; heavily degraded carbon copies or illegible provider handwriting may produce lower confidence extractions.
-- DICOM and specialized imaging formats are not directly parsed (rasterized medical photography only).
-
-### Future Roadmap
-- Direct integration with FHIR (Fast Healthcare Interoperability Resources) R4 APIs for bidirectional EHR synchronization.
-- SNOMED CT and RxNorm ontology mapping for standardized terminology coding.
-- Audio transcription pipeline for ambient physician-patient clinical encounters.
+* **100% Synthetic Data**: All patient names, MRNs, encounter notes, and diagnostic records used in this workspace are entirely synthetic and HIPAA Safe Harbor compliant.
+* **Clinical Decision Support Boundary**: ClinixLens is strictly an administrative document review and intelligence extraction workspace. It does not provide autonomous clinical diagnoses, treatment recommendations, or direct patient care.
