@@ -470,7 +470,7 @@ async def update_finding_verification(
 
     finding.verification_status = req.verification_status.value
     finding.verified_by = req.verified_by
-    finding.verified_at = datetime.now(timezone.utc)
+    finding.verified_at = datetime.now(timezone.utc).replace(tzinfo=None)
     await db.commit()
 
     # Recalculate review progress on parent analysis

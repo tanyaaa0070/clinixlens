@@ -315,7 +315,7 @@ class PipelineOrchestrator:
                 analysis_obj.ocr_required = ocr_needed
                 analysis_obj.ocr_confidence = ocr_confidence
                 analysis_obj.status = AnalysisStatus.COMPLETED.value
-                analysis_obj.processing_completed_at = datetime.now(timezone.utc)
+                analysis_obj.processing_completed_at = datetime.now(timezone.utc).replace(tzinfo=None)
                 analysis_obj.processing_duration_ms = duration_ms
                 analysis_obj.overall_confidence = structured_report.overall_confidence
                 analysis_obj.concerns_count = len(structured_report.clinical_concerns)
